@@ -67,8 +67,38 @@
       now - lastStep >= 300
     ) {
       steps++;
-      lastStep = now;
-      refresh();
+localStorage.setItem(key, String(steps));
+updateAllFitnessStats(steps);
+
+const resetButton = document.getElementById("resetTracking");
+
+if (resetButton) {
+  resetButton.addEventListener("click", () => {
+    const confirmed = confirm(
+      "Reset today's steps, calories, distance, and progress?"
+    );
+
+    if (!confirmed) return;
+
+    // Reset today's count
+    steps = 0;
+    localStorage.setItem(key, "0");
+
+    // Update every dashboard statistic
+    updateAllFitnessStats(steps);
+
+    // Reset the sensor detector's previous movement state
+    previous = 0;
+    peak = false;
+
+    // Keep tracking active if it was already running
+    status.textContent = tracking
+      ? "Steps reset. Keep walking!"
+      : "Today's progress has been reset.";
+
+  });
+}
+
     }
 
     previousSlope = slope;

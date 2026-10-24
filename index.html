@@ -73,17 +73,17 @@
             <span class="status-dot" id="statusDot"></span>
             <span id="stepStatus">Tracker is stopped</span>
           </div>
+          
+<div class="actions">
+  <button class="btn-primary" id="startTracking" type="button">
+    Start tracking
+  </button>
 
-          <div class="actions">
-           
-            <button class="btn btn-secondary" id="stopTracking" disabled>
-              Stop<button class="btn-primary" id="startTracking">
-  Start tracking
-</button>
+  <button class="btn-secondary" id="resetTracking" type="button">
+    Reset Today
+  </button>
+</div>
 
-<p id="trackerStatus">Tracker stopped</p>
-            </button>
-          </div>
 
           <button class="reset-link" id="resetTracking">
             Reset today's steps
@@ -309,6 +309,65 @@
 
   update();
 })();
+
+const DAILY_STEP_GOAL = 8000;
+
+// Approximate estimates; actual values depend on your body and walking pace.
+const KM_PER_STEP = 0.0007;
+const KCAL_PER_STEP = 0.04;
+
+function updateAllFitnessStats(currentSteps) {
+  const steps = Math.max(0, Number(currentSteps) || 0);
+  const distanceKm = steps * KM_PER_STEP;
+  const calories = Math.round(steps * KCAL_PER_STEP);
+  const percentage = Math.min(
+    100,
+    (steps / DAILY_STEP_GOAL) * 100
+  );
+  const remaining = Math.max(0, DAILY_STEP_GOAL - steps);
+
+  // Main statistics
+  setText("stepCount", steps.toLocaleString());
+  setText("calories", calories.toLocaleString());
+  setText("distance", distanceKm.toFixed(2));
+
+  // Daily goal summaries
+  setText(
+    "stepsSummary",
+    `${steps.toLocaleString()} / ${DAILY_STEP_GOAL.toLocaleString()}`
+  );
+  setText("distanceSummary", `${distanceKm.toFixed(2)} km`);
+  setText("caloriesSummary", `${calories.toLocaleString()} kcal`);
+
+  // Progress bar
+  const bar = document.getElementById("stepProgress");
+  if (bar) {
+    bar.style.width = `${percentage}%`;
+    bar.setAttribute("role", "progressbar");
+    bar.setAttribute("aria-valuemin", "0");
+    bar.setAttribute("aria-valuemax", "100");
+    bar.setAttribute("aria-valuenow", String(Math.round(percentage)));
+  }
+
+  setText("progressPercent", `${Math.round(percentage)}% completed`);
+
+  // Remaining steps and completion message
+  setText(
+    "goalMessage",
+    remaining === 0
+      ? "🎉 Daily step goal reached! Great work!"
+      : `🌟 ${remaining.toLocaleString()} steps to your daily goal.`
+  );
+}
+
+function setText(id, value) {
+  const element = document.getElementById(id);
+  if (element) element.textContent = value;
+}
+
+// Initialize the dashboard with the current saved step count.
+updateAllFitnessStats(steps);
+
 </script>
 
 
