@@ -356,14 +356,14 @@ footer { text-align: center; color: white; padding: 24px 0 8px; font-size: 12px;
       : Math.abs(magnitude - baseline);
 
     // Detect a local peak, then require a minimum time between steps.
-    const threshold = sensorMode === "linear" ? 1.15 : 0.95;
+    const threshold = sensorMode === "linear" ? 2.0 : 1.5;
     const now = Date.now();
 
     if (
       prevSignal > oldSignal &&
       prevSignal >= signal &&
       prevSignal > threshold &&
-      now - lastStepAt >= 280
+      now - lastStepAt >= 450
     ) {
       peaks++;
 
