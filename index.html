@@ -75,11 +75,13 @@
           </div>
 
           <div class="actions">
-            <button class="btn btn-primary" id="startTracking">
-              ▶ Start Tracking
-            </button>
+           
             <button class="btn btn-secondary" id="stopTracking" disabled>
-              Stop
+              Stop<button class="btn-primary" id="startTracking">
+  Start tracking
+</button>
+
+<p id="trackerStatus">Tracker stopped</p>
             </button>
           </div>
 
@@ -183,5 +185,132 @@
       <p>Progress at your own pace. One step at a time.</p>
     </footer>
   </div>
+
+<script>
+(() => {
+  const button = document.getElementById("startTracking");
+  const status = document.getElementById("trackerStatus");
+  const counter = document.getElementById("stepCount");
+
+  if (!button || !status || !counter) {
+    console.error("FitSoul: Missing tracker HTML elements.");
+    return;
+  }
+
+  const todayKey = () => {
+    const d = new Date();
+    return `fitsoul-steps-${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  };
+
+  let key = todayKey();
+  let steps = Number(localStorage.getItem(key) || 0);
+  let active = false;
+  let lastStep = 0;
+  let previous = 0;
+  let peak = false;
+  let lastEvent = 0;
+
+  function update() {
+    if (key !== todayKey()) {
+      key = todayKey();
+      steps = Number(localStorage.getItem(key) || 0);
+    }
+
+    counter.textContent = steps.toLocaleString();
+    localStorage.setItem(key, steps);
+
+    if (typeof updateDashboard === "function") {
+      updateDashboard(steps);
+    }
+  }
+
+  function onMotion(event) {
+    if (!active) return;
+
+    lastEvent = Date.now();
+
+    const a = event.acceleration;
+    const g = event.accelerationIncludingGravity;
+    let magnitude;
+
+    if (a && a.x != null && a.y != null && a.z != null) {
+      magnitude = Math.hypot(a.x, a.y, a.z);
+    } else if (g && g.x != null && g.y != null && g.z != null) {
+      magnitude = Math.abs(Math.hypot(g.x, g.y, g.z) - 9.81);
+    } else {
+      status.textContent = "Motion event received, but no acceleration values.";
+      return;
+    }
+
+    // Simple peak detector; this is an estimate, not a certified pedometer.
+    if (magnitude > 1.2 && previous <= 1.2 && !peak) {
+      const now = Date.now();
+
+      if (now - lastStep >= 300) {
+        steps++;
+        lastStep = now;
+        update();
+      }
+      peak = true;
+    }
+
+    if (magnitude < 0.6) peak = false;
+    previous = magnitude;
+  }
+
+  button.addEventListener("click", async () => {
+    if (active) {
+      active = false;
+      window.removeEventListener("devicemotion", onMotion);
+      button.textContent = "Start tracking";
+      status.textContent = "Tracking stopped. Steps saved.";
+      return;
+    }
+
+    if (!window.isSecureContext) {
+      status.textContent = "Open the HTTPS GitHub Pages website.";
+      return;
+    }
+
+    try {
+      if (typeof DeviceMotionEvent.requestPermission === "function") {
+        const permission = await DeviceMotionEvent.requestPermission();
+
+        if (permission !== "granted") {
+          status.textContent = "Motion permission denied. Allow access and retry.";
+          return;
+        }
+      }
+
+      previous = 0;
+      peak = false;
+      lastEvent = 0;
+
+      window.addEventListener("devicemotion", onMotion);
+      active = true;
+      button.textContent = "Stop tracking";
+      status.textContent = "Waiting for motion data... Walk with your phone.";
+
+      // Check whether the browser delivers sensor events.
+      setTimeout(() => {
+        if (active && !lastEvent) {
+          status.textContent =
+            "No motion events received. Check phone permissions and browser support.";
+        } else if (active) {
+          status.textContent = "Motion data received. Walking tracker is active.";
+        }
+      }, 3000);
+
+    } catch (error) {
+      console.error(error);
+      status.textContent = "Could not start. Check browser permissions.";
+    }
+  });
+
+  update();
+})();
+</script>
+
+
 </body>
 </html>
