@@ -785,5 +785,192 @@
 })();
 </script>
 
+<div style="background:#fff0df;padding:15px;border-radius:12px;margin:15px 0">
+  <h3>FitSoul Sensor Test</h3>
+  <p id="sensor-status">Tap the button to test your phone.</p>
+  <button id="sensor-test-button">Test Motion Sensor</button>
+</div>
+
+(() => {
+  // FitSoul automatic step counter
+  const $ = id => document.getElementById(id);
+
+  const startBtn = $("startTracking");
+  const stopBtn = $("stop-steps");
+  const resetBtn = $("resetTracking");
+  const statusEl = $("step-status");
+
+  if (!startBtn) {
+    console.error("FitSoul: startTracking button not found.");
+    return;
+  }
+
+  const GOAL = 8000;
+  const STEP_LENGTH_KM = 0.0007; // Approx. 70 cm per step
+  const KCAL_PER_STEP = 0.04;   // Rough estimate
+
+  const dayKey = () => {
+    const d = new Date();
+    return `fitsoul-steps-${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  };
+
+  let steps = Number(localStorage.getItem(dayKey()) || 0);
+  let tracking = false;
+  let gx = 0, gy = 0, gz = 0;
+  let calibrated = false;
+  let aboveThreshold = false;
+  let lastStepTime = 0;
+  let peak = 0;
+
+  function setStatus(message) {
+    if (statusEl) statusEl.textContent = message;
+  }
+
+  function render() {
+    // Update steps, distance and estimated calories.
+    const distance = steps * STEP_LENGTH_KM;
+    const calories = Math.round(steps * KCAL_PER_STEP);
+    const percent = Math.min(100, steps / GOAL * 100);
+
+    if ($("stepCount")) $("stepCount").textContent = steps.toLocaleString();
+    if ($("step-count")) $("step-count").textContent = steps.toLocaleString();
+    if ($("distance")) $("distance").textContent = distance.toFixed(2);
+    if ($("calories")) $("calories").textContent = calories.toLocaleString();
+
+    if ($("stepProgress")) $("stepProgress").style.width = percent + "%";
+    if ($("progressPercent")) {
+      $("progressPercent").textContent = Math.round(percent) + "% completed";
+    }
+    if ($("stepsSummary")) {
+      $("stepsSummary").textContent =
+        `${steps.toLocaleString()} / ${GOAL.toLocaleString()}`;
+    }
+    if ($("distanceSummary")) {
+      $("distanceSummary").textContent = distance.toFixed(2) + " km";
+    }
+    if ($("caloriesSummary")) {
+      $("caloriesSummary").textContent = calories + " kcal";
+    }
+    if ($("goalMessage")) {
+      $("goalMessage").textContent = steps >= GOAL
+        ? "🎉 Daily step goal reached!"
+        : `🌟 ${(GOAL - steps).toLocaleString()} steps to your daily goal.`;
+    }
+
+    localStorage.setItem(dayKey(), String(steps));
+  }
+
+  function onMotion(event) {
+    const a = event.acceleration;
+    const b = event.accelerationIncludingGravity;
+
+    // Prefer linear acceleration if available.
+    let x, y, z;
+    if (a && a.x != null && a.y != null && a.z != null) {
+      x = a.x; y = a.y; z = a.z;
+    } else if (b && b.x != null && b.y != null && b.z != null) {
+      x = b.x; y = b.y; z = b.z;
+
+      // Estimate gravity with a low-pass filter.
+      if (!calibrated) {
+        gx = x; gy = y; gz = z;
+        calibrated = true;
+      }
+      gx = 0.8 * gx + 0.2 * x;
+      gy = 0.8 * gy + 0.2 * y;
+      gz = 0.8 * gz + 0.2 * z;
+
+      x -= gx; y -= gy; z -= gz;
+    } else {
+      setStatus("No accelerometer data. Try Chrome on your phone.");
+      return;
+    }
+
+    const strength = Math.hypot(x, y, z);
+    const now = Date.now();
+
+    // A simple motion-peak detector; sensitivity may vary by phone.
+    if (strength > 1.2) {
+      if (!aboveThreshold) {
+        aboveThreshold = true;
+        peak = strength;
+      } else {
+        peak = Math.max(peak, strength);
+      }
+    } else if (strength < 0.7) {
+      if (
+        aboveThreshold &&
+        peak > 1.2 &&
+        now - lastStepTime > 300
+      ) {
+        steps++;
+        lastStepTime = now;
+        render();
+        setStatus("Tracking active — steps detected!");
+      }
+      aboveThreshold = false;
+      peak = 0;
+    }
+  }
+
+  async function startTracking() {
+    if (tracking) return;
+
+    if (!window.isSecureContext) {
+      setStatus("Open the HTTPS FitSoul website.");
+      return;
+    }
+
+    if (!("DeviceMotionEvent" in window)) {
+      setStatus("This browser does not support motion sensors.");
+      return;
+    }
+
+    try {
+      if (typeof DeviceMotionEvent.requestPermission === "function") {
+        const result = await DeviceMotionEvent.requestPermission();
+        if (result !== "granted") {
+          setStatus("Motion permission was denied.");
+          return;
+        }
+      }
+
+      calibrated = false;
+      aboveThreshold = false;
+      window.addEventListener("devicemotion", onMotion);
+      tracking = true;
+      startBtn.disabled = true;
+      setStatus("Sensor enabled. Start walking!");
+    } catch (error) {
+      setStatus("Sensor error: " + error.message);
+    }
+  }
+
+  function stopTracking() {
+    window.removeEventListener("devicemotion", onMotion);
+    tracking = false;
+    startBtn.disabled = false;
+    setStatus("Tracking stopped. Today's steps are saved.");
+  }
+
+  startBtn.addEventListener("click", startTracking);
+  if (stopBtn) stopBtn.addEventListener("click", stopTracking);
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      if (confirm("Reset today's steps?")) {
+        steps = 0;
+        render();
+        setStatus("Today's count reset.");
+      }
+    });
+  }
+
+  render();
+})();
+
+</script>
+
+
 </body>
 </html>
