@@ -2,975 +2,459 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#ff7918">
-  <title>FitSoul - Fitness Tracker</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ff7900">
+<title>FitSoul - Fitness Tracker</title>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-    :root {
-      --orange: #ff7918;
-      --orange-dark: #e85d04;
-      --cream: #fffaf4;
-      --ink: #2b251f;
-      --muted: #81766d;
-      --green: #27885c;
-      --line: #f0e5d9;
-    }
+:root {
+  --orange: #ff7900;
+  --orange-light: #fff0df;
+  --dark: #29231f;
+  --muted: #81766d;
+  --cream: #fffaf5;
+}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+* { box-sizing: border-box; }
 
-    body {
-      min-height: 100vh;
-      padding: 22px;
-      font-family: 'Poppins', sans-serif;
-      color: var(--ink);
-      background: linear-gradient(135deg, #ff7918, #ffb45e);
-    }
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: 'Poppins', Arial, sans-serif;
+  color: var(--dark);
+  background: linear-gradient(140deg, #ff7900, #ffb35c);
+  min-height: 100vh;
+}
 
-    button {
-      font: inherit;
-      cursor: pointer;
-      border: 0;
-      transition: transform .2s, opacity .2s;
-    }
+.container { max-width: 950px; margin: auto; }
 
-    button:hover {
-      transform: translateY(-2px);
-    }
+header {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: white;
+  margin: 8px 0 26px;
+}
 
-    button:focus-visible {
-      outline: 3px solid #5c3517;
-      outline-offset: 3px;
-    }
+.logo {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  background: white;
+  color: var(--orange);
+  border-radius: 18px;
+  font-size: 47px;
+  font-weight: 700;
+}
 
-    button:disabled {
-      opacity: .65;
-      cursor: not-allowed;
-    }
+header h1 { margin: 0; font-size: 28px; }
+header p { margin: 0; font-size: 12px; }
 
-    .app {
-      width: 100%;
-      max-width: 1050px;
-      margin: auto;
-    }
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      color: white;
-      margin-bottom: 28px;
-    }
+.card {
+  background: var(--cream);
+  border-radius: 23px;
+  padding: 24px;
+  box-shadow: 0 12px 35px #91460020;
+  min-width: 0;
+}
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+.main-card { grid-column: 1 / -1; }
 
-    .logo {
-      width: 56px;
-      height: 56px;
-      display: grid;
-      place-items: center;
-      background: white;
-      color: var(--orange-dark);
-      border-radius: 18px;
-      font-size: 45px;
-      font-weight: 700;
-      box-shadow: 0 8px 25px #a44a1530;
-    }
+h2 { margin: 0 0 6px; font-size: 19px; }
+.subtitle { color: var(--muted); font-size: 12px; margin: 0 0 20px; }
 
-    .brand h1 {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -.8px;
-    }
+.big-number {
+  font-size: clamp(43px, 9vw, 66px);
+  font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
 
-    .brand p {
-      font-size: 11px;
-      opacity: .9;
-    }
+.unit { color: var(--muted); font-size: 14px; font-weight: 500; }
 
-    .date-pill {
-      padding: 10px 14px;
-      border-radius: 30px;
-      background: #ffffff30;
-      font-size: 12px;
-    }
+.progress-track {
+  width: 100%;
+  height: 13px;
+  background: #eee1d4;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 18px 0 10px;
+}
 
-    .welcome {
-      color: white;
-      margin-bottom: 20px;
-    }
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff7900, #ffb347);
+  border-radius: 20px;
+  transition: width .25s ease;
+}
 
-    .welcome h2 {
-      font-size: clamp(24px, 5vw, 35px);
-      line-height: 1.25;
-      margin-bottom: 7px;
-    }
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
 
-    .welcome p {
-      font-size: 13px;
-      opacity: .95;
-    }
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+}
 
-    .dashboard {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 18px;
-    }
+.stat {
+  background: white;
+  border: 1px solid #f2e6da;
+  padding: 16px;
+  border-radius: 17px;
+  min-width: 0;
+}
 
-    .card {
-      min-width: 0;
-      background: var(--cream);
-      padding: 24px;
-      border-radius: 24px;
-      box-shadow: 0 12px 35px #743b121c;
-    }
+.stat-icon { font-size: 25px; }
+.stat-label { color: var(--muted); font-size: 12px; margin-top: 7px; }
+.stat-number { font-size: clamp(21px, 5vw, 30px); font-weight: 700; overflow-wrap: anywhere; }
+.stat-unit { color: var(--muted); font-size: 12px; }
 
-    .card h3 {
-      font-size: 18px;
-      margin-bottom: 5px;
-    }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 
-    .muted {
-      color: var(--muted);
-      font-size: 12px;
-    }
+button {
+  padding: 13px 18px;
+  border: none;
+  border-radius: 13px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
 
-    .steps-card {
-      grid-row: span 2;
-    }
+.primary { background: var(--orange); color: white; }
+.secondary { background: var(--orange-light); color: #a64b00; }
+button:disabled { opacity: .6; cursor: not-allowed; }
 
-    .step-number {
-      font-size: clamp(48px, 8vw, 70px);
-      font-weight: 800;
-      line-height: 1.3;
-      letter-spacing: -3px;
-      margin-top: 20px;
-      overflow-wrap: anywhere;
-    }
+.status {
+  margin-top: 17px;
+  padding: 13px;
+  background: var(--orange-light);
+  border-radius: 13px;
+  font-size: 12px;
+  color: #914600;
+  overflow-wrap: anywhere;
+}
 
-    .step-unit {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--muted);
-      letter-spacing: 0;
-    }
+.goal-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #eee4d9;
+  padding: 13px 0;
+  font-size: 13px;
+}
 
-    .progress-track {
-      width: 100%;
-      height: 13px;
-      margin: 16px 0 10px;
-      background: #eee3d7;
-      border-radius: 20px;
-      overflow: hidden;
-    }
+.goal-row:last-child { border-bottom: none; }
+.goal-value { font-weight: 700; text-align: right; }
 
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #ff7918, #ffc05e);
-      border-radius: inherit;
-      transition: width .35s ease;
-    }
+footer { text-align: center; color: white; padding: 24px 0 8px; font-size: 12px; }
 
-    .progress-labels {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .goal-message {
-      background: #fff0df;
-      color: #97490c;
-      padding: 14px;
-      border-radius: 15px;
-      font-size: 12px;
-      margin-top: 20px;
-    }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      margin-top: 18px;
-    }
-
-    .btn {
-      padding: 12px 16px;
-      border-radius: 13px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .btn-primary {
-      color: white;
-      background: var(--orange);
-    }
-
-    .btn-stop {
-      color: #a72b20;
-      background: #ffebe8;
-    }
-
-    .btn-light {
-      color: var(--orange-dark);
-      background: #fff0df;
-    }
-
-    .status {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      margin-top: 16px;
-      font-size: 12px;
-      color: var(--muted);
-      overflow-wrap: anywhere;
-    }
-
-    .status-dot {
-      flex: 0 0 9px;
-      height: 9px;
-      margin-top: 5px;
-      border-radius: 50%;
-      background: #a7a29c;
-    }
-
-    .status-dot.active {
-      background: var(--green);
-      box-shadow: 0 0 0 4px #27885c20;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .stat {
-      background: white;
-      border: 1px solid var(--line);
-      padding: 17px 14px;
-      border-radius: 18px;
-      min-width: 0;
-    }
-
-    .stat-icon {
-      font-size: 24px;
-      margin-bottom: 9px;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .stat-value {
-      font-size: clamp(20px, 4vw, 27px);
-      font-weight: 700;
-      margin-top: 4px;
-      overflow-wrap: anywhere;
-    }
-
-    .stat-unit {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 400;
-    }
-
-    .goal-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--line);
-      font-size: 12px;
-    }
-
-    .goal-row:last-child {
-      border-bottom: 0;
-    }
-
-    .goal-row strong {
-      text-align: right;
-      overflow-wrap: anywhere;
-    }
-
-    .goal-input {
-      width: 100%;
-      margin-top: 15px;
-      padding: 11px 12px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: white;
-      font: inherit;
-      font-size: 13px;
-    }
-
-    footer {
-      text-align: center;
-      color: white;
-      padding: 25px 0 8px;
-      font-size: 11px;
-    }
-
-    @media (max-width: 720px) {
-      body {
-        padding: 15px;
-      }
-
-      header {
-        align-items: flex-start;
-      }
-
-      .brand h1 {
-        font-size: 24px;
-      }
-
-      .logo {
-        width: 48px;
-        height: 48px;
-        font-size: 38px;
-      }
-
-      .date-pill {
-        font-size: 10px;
-        padding: 8px;
-      }
-
-      .dashboard {
-        grid-template-columns: 1fr;
-      }
-
-      .steps-card {
-        grid-row: auto;
-      }
-
-      .card {
-        padding: 20px;
-        border-radius: 21px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        transition: none !important;
-      }
-    }
-  </style>
+@media(max-width: 600px) {
+  body { padding: 14px; }
+  .dashboard { grid-template-columns: 1fr; }
+  .main-card { grid-column: auto; }
+  .card { padding: 20px; }
+  header h1 { font-size: 25px; }
+  .logo { width: 52px; height: 52px; }
+}
+</style>
 </head>
 
 <body>
-<div class="app">
+<div class="container">
 
-  <header>
-    <div class="brand">
-      <div class="logo" aria-label="Infinity logo">∞</div>
-      <div>
-        <h1>FitSoul</h1>
-        <p>Move with purpose. Live with energy.</p>
-      </div>
+<header>
+  <div class="logo" aria-label="Infinity logo">∞</div>
+  <div>
+    <h1>FitSoul</h1>
+    <p>Move with purpose. Live with energy.</p>
+  </div>
+</header>
+
+<main class="dashboard">
+
+  <section class="card main-card">
+    <h2>Today's Steps 👟</h2>
+    <p class="subtitle">Every step brings you closer to your goal.</p>
+
+    <div class="big-number" id="steps">0</div>
+    <div class="unit">steps walked</div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progress"></div>
     </div>
-    <div class="date-pill" id="todayDate">Today's activity</div>
-  </header>
 
-  <section class="welcome">
-    <h2>Your journey, your progress.</h2>
-    <p>Every step counts. Keep moving toward a healthier you.</p>
+    <div class="progress-labels">
+      <span id="percent">0% completed</span>
+      <span>Goal: 8,000 steps</span>
+    </div>
+
+    <div class="actions">
+      <button class="primary" id="start">▶ Start Walking</button>
+      <button class="secondary" id="stop" disabled>■ Stop</button>
+      <button class="secondary" id="reset">↻ Reset Today</button>
+    </div>
+
+    <div class="status" id="status" role="status" aria-live="polite">
+      Ready to start. Tap Start Walking and move your phone naturally.
+    </div>
   </section>
 
-  <main class="dashboard">
+  <section class="card">
+    <h2>Your Activity 🔥</h2>
+    <p class="subtitle">Estimated daily results</p>
 
-    <section class="card steps-card">
-      <h3>🚶 Today's Steps</h3>
-      <p class="muted">Your daily movement at a glance.</p>
-
-      <div class="step-number">
-        <span id="stepCount">0</span>
-        <span class="step-unit">steps</span>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-icon">📍</div>
+        <div class="stat-label">Distance</div>
+        <div class="stat-number" id="km">0.00</div>
+        <div class="stat-unit">kilometres</div>
       </div>
 
-      <div class="progress-track"
-           role="progressbar"
-           aria-label="Daily step goal progress"
-           aria-valuemin="0"
-           aria-valuemax="100"
-           aria-valuenow="0"
-           id="progressTrack">
-        <div class="progress-fill" id="stepProgress"></div>
+      <div class="stat">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-label">Calories burned</div>
+        <div class="stat-number" id="calories">0</div>
+        <div class="stat-unit">kcal estimated</div>
       </div>
+    </div>
+  </section>
 
-      <div class="progress-labels">
-        <span id="progressPercent">0% completed</span>
-        <span id="goalLabel">Goal: 8,000 steps</span>
-      </div>
+  <section class="card">
+    <h2>Daily Goals 🎯</h2>
+    <p class="subtitle">Your progress at a glance</p>
 
-      <div class="goal-message" id="goalMessage">
-        🌟 Start walking to make progress toward your daily goal!
-      </div>
+    <div class="goal-row">
+      <span>👟 Steps</span>
+      <span class="goal-value" id="stepsSummary">0 / 8,000</span>
+    </div>
+    <div class="goal-row">
+      <span>📍 Distance</span>
+      <span class="goal-value" id="kmSummary">0.00 km</span>
+    </div>
+    <div class="goal-row">
+      <span>🔥 Calories</span>
+      <span class="goal-value" id="calSummary">0 kcal</span>
+    </div>
+    <div class="goal-row">
+      <span>🏆 Goal status</span>
+      <span class="goal-value" id="goalStatus">In progress</span>
+    </div>
+  </section>
 
-      <div class="button-row">
-        <button class="btn btn-primary" id="startTracking" type="button">
-          ▶ Start tracking
-        </button>
-        <button class="btn btn-stop" id="stopTracking" type="button">
-          ■ Stop
-        </button>
-        <button class="btn btn-light" id="resetTracking" type="button">
-          ↻ Reset today
-        </button>
-      </div>
+</main>
 
-      <div class="status" role="status" aria-live="polite">
-        <span class="status-dot" id="statusDot"></span>
-        <span id="trackerStatus">Ready. Tap Start tracking to begin.</span>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>🔥 Your Fitness Stats</h3>
-      <p class="muted">Estimated daily activity.</p>
-
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-icon">🔥</div>
-          <div class="stat-label">Calories burned</div>
-          <div class="stat-value">
-            <span id="calories">0</span>
-            <span class="stat-unit">kcal</span>
-          </div>
-        </div>
-
-        <div class="stat">
-          <div class="stat-icon">📍</div>
-          <div class="stat-label">Distance walked</div>
-          <div class="stat-value">
-            <span id="distance">0.00</span>
-            <span class="stat-unit">km</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h3>🎯 Daily Goals</h3>
-      <p class="muted">Make a little progress every day.</p>
-
-      <div class="goal-row">
-        <span>👟 Steps</span>
-        <strong id="stepsSummary">0 / 8,000</strong>
-      </div>
-      <div class="goal-row">
-        <span>📍 Distance</span>
-        <strong id="distanceSummary">0.00 km</strong>
-      </div>
-      <div class="goal-row">
-        <span>🔥 Calories</span>
-        <strong id="caloriesSummary">0 kcal</strong>
-      </div>
-
-      <label for="goalInput" class="muted" style="display:block;margin-top:16px">
-        Customize your step goal
-      </label>
-      <input class="goal-input" id="goalInput"
-             type="number" min="100" max="100000"
-             step="100" value="8000">
-    </section>
-
-  </main>
-
-  <footer>
-    FitSoul ∞ — Every step is progress.
-  </footer>
+<footer>FitSoul ∞ · Every step counts</footer>
 </div>
 
 <script>
 (() => {
   "use strict";
 
-  const $ = id => document.getElementById(id);
-
-  const startBtn = $("startTracking");
-  const stopBtn = $("stopTracking");
-  const resetBtn = $("resetTracking");
-  const statusEl = $("trackerStatus");
-  const statusDot = $("statusDot");
-  const goalInput = $("goalInput");
-
-  const STEP_LENGTH_KM = 0.0007;
+  const GOAL = 8000;
+  const STEP_LENGTH_KM = 0.00070;
   const KCAL_PER_STEP = 0.04;
 
-  let goal = 8000;
-  let steps = 0;
-  let tracking = false;
-  let sensorAttached = false;
-  let lastStepTime = 0;
-  let previousMagnitude = 0;
-  let previousSlope = 0;
-  let gravity = 9.81;
-  let recentPeaks = [];
-  let lastMotionTime = 0;
-  let storageKey = "";
+  const $ = id => document.getElementById(id);
 
-  function dayKey() {
+  function dateKey() {
     const d = new Date();
-    const date = [
-      d.getFullYear(),
-      String(d.getMonth() + 1).padStart(2, "0"),
-      String(d.getDate()).padStart(2, "0")
-    ].join("-");
-    return "fitsoul-" + date;
+    return `fitsoul-${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
   }
 
-  function setStatus(message, isActive = tracking) {
-    statusEl.textContent = message;
-    statusDot.classList.toggle("active", isActive);
+  let key = dateKey();
+  let steps = Number(localStorage.getItem(key) || 0);
+  let tracking = false;
+  let baseline = null;
+  let oldSignal = 0;
+  let prevSignal = 0;
+  let lastStepAt = 0;
+  let peaks = 0;
+  let motionEvents = 0;
+  let sensorMode = "";
+
+  function setStatus(message) {
+    $("status").textContent = message;
   }
 
-  function saveSteps() {
-    try {
-      localStorage.setItem(storageKey, String(steps));
-    } catch (error) {
-      console.warn("Could not save steps.", error);
-    }
-  }
-
-  function refreshDay() {
-    const currentKey = dayKey();
-
-    if (currentKey !== storageKey) {
-      storageKey = currentKey;
-      try {
-        steps = Number(localStorage.getItem(storageKey)) || 0;
-      } catch {
-        steps = 0;
-      }
+  function checkNewDay() {
+    if (key !== dateKey()) {
+      key = dateKey();
+      steps = Number(localStorage.getItem(key) || 0);
       render();
-      updateDate();
     }
-  }
-
-  function updateDate() {
-    $("todayDate").textContent = new Date().toLocaleDateString(
-      undefined,
-      { weekday: "short", month: "short", day: "numeric" }
-    );
   }
 
   function render() {
-    const distanceKm = steps * STEP_LENGTH_KM;
+    const distance = steps * STEP_LENGTH_KM;
     const calories = Math.round(steps * KCAL_PER_STEP);
-    const percentage = Math.min(100, steps / goal * 100);
-    const remaining = Math.max(0, goal - steps);
+    const percent = Math.min(100, steps / GOAL * 100);
 
-    $("stepCount").textContent = steps.toLocaleString();
+    $("steps").textContent = steps.toLocaleString();
+    $("km").textContent = distance.toFixed(2);
     $("calories").textContent = calories.toLocaleString();
-    $("distance").textContent = distanceKm.toFixed(2);
-
+    $("progress").style.width = percent + "%";
+    $("percent").textContent = Math.round(percent) + "% completed";
     $("stepsSummary").textContent =
-      `${steps.toLocaleString()} / ${goal.toLocaleString()}`;
-    $("distanceSummary").textContent = `${distanceKm.toFixed(2)} km`;
-    $("caloriesSummary").textContent = `${calories.toLocaleString()} kcal`;
+      `${steps.toLocaleString()} / ${GOAL.toLocaleString()}`;
+    $("kmSummary").textContent = distance.toFixed(2) + " km";
+    $("calSummary").textContent = calories + " kcal";
+    $("goalStatus").textContent =
+      steps >= GOAL ? "Goal reached! 🎉" : "In progress";
 
-    $("stepProgress").style.width = percentage + "%";
-    $("progressPercent").textContent =
-      Math.round(percentage) + "% completed";
-    $("progressTrack").setAttribute(
-      "aria-valuenow", String(Math.round(percentage))
-    );
-    $("goalLabel").textContent = `Goal: ${goal.toLocaleString()} steps`;
-
-    $("goalMessage").textContent = remaining === 0
-      ? "🎉 Amazing! You've reached your daily step goal."
-      : `🌟 ${remaining.toLocaleString()} steps left to reach your daily goal.`;
-
-    saveSteps();
+    localStorage.setItem(key, String(steps));
   }
 
-  function handleMotion(event) {
+  function onMotion(event) {
     if (!tracking) return;
-
-    lastMotionTime = Date.now();
-    refreshDay();
+    checkNewDay();
+    motionEvents++;
 
     const a = event.acceleration;
     const g = event.accelerationIncludingGravity;
-    let signal;
 
+    let magnitude;
+
+    // Linear acceleration is preferable when supplied by the browser.
     if (a && a.x != null && a.y != null && a.z != null) {
-      signal = Math.hypot(a.x, a.y, a.z);
+      magnitude = Math.hypot(a.x, a.y, a.z);
+      sensorMode = "linear";
     } else if (g && g.x != null && g.y != null && g.z != null) {
-      // Approximate gravity removal for browsers without linear acceleration.
-      const magnitude = Math.hypot(g.x, g.y, g.z);
-      gravity += 0.15 * (magnitude - gravity);
-      signal = Math.abs(magnitude - gravity);
+      magnitude = Math.hypot(g.x, g.y, g.z);
+      sensorMode = "gravity";
     } else {
-      setStatus("Motion events arrived without usable acceleration data.");
+      if (motionEvents === 1) {
+        setStatus("Motion events received, but acceleration data is missing.");
+      }
       return;
     }
 
-    const slope = signal - previousMagnitude;
+    // Estimate the slowly changing gravity baseline.
+    if (baseline === null) baseline = magnitude;
+    baseline += 0.08 * (magnitude - baseline);
+
+    const signal = sensorMode === "linear"
+      ? magnitude
+      : Math.abs(magnitude - baseline);
+
+    // Detect a local peak, then require a minimum time between steps.
+    const threshold = sensorMode === "linear" ? 1.15 : 0.95;
     const now = Date.now();
 
-    // Count a peak only after the signal has risen and then fallen.
-    // This is a simple estimate and can miscount other phone movements.
     if (
-      previousSlope > 0 &&
-      slope <= 0 &&
-      previousMagnitude > 1.15 &&
-      now - lastStepTime >= 300 &&
-      now - lastStepTime <= 1500
+      prevSignal > oldSignal &&
+      prevSignal >= signal &&
+      prevSignal > threshold &&
+      now - lastStepAt >= 280
     ) {
-      recentPeaks.push(now);
-      recentPeaks = recentPeaks.filter(t => now - t < 1200);
+      peaks++;
 
-      if (recentPeaks.length >= 1) {
+      // Reject isolated sensor spikes; allow normal walking cadence.
+      if (peaks >= 1) {
         steps++;
-        lastStepTime = now;
+        lastStepAt = now;
+        peaks = 0;
         render();
+        setStatus("Tracking active — steps detected!");
       }
     }
 
-    previousSlope = slope;
-    previousMagnitude = signal;
+    oldSignal = prevSignal;
+    prevSignal = signal;
+
+    if (motionEvents === 1) {
+      setStatus("Sensor connected. Walk naturally with your phone.");
+    }
   }
 
   async function startTracking() {
     if (tracking) return;
 
     if (!window.isSecureContext) {
-      setStatus("Please open the HTTPS GitHub Pages website.", false);
+      setStatus("Please open the published HTTPS website.");
       return;
     }
 
     if (!("DeviceMotionEvent" in window)) {
-      setStatus("Motion sensors are not supported in this browser.", false);
+      setStatus("This browser does not support motion sensors. Try Chrome on Android.");
       return;
     }
 
     try {
       if (typeof DeviceMotionEvent.requestPermission === "function") {
         const permission = await DeviceMotionEvent.requestPermission();
-
         if (permission !== "granted") {
-          setStatus("Motion permission denied. Allow access and retry.", false);
+          setStatus("Motion permission denied. Allow access and try again.");
           return;
         }
       }
 
-      previousMagnitude = 0;
-      previousSlope = 0;
-      gravity = 9.81;
-      recentPeaks = [];
-      lastMotionTime = 0;
+      baseline = null;
+      oldSignal = 0;
+      prevSignal = 0;
+      motionEvents = 0;
+      peaks = 0;
 
-      window.addEventListener("devicemotion", handleMotion);
-      sensorAttached = true;
-      tracking = true;
-
-      startBtn.disabled = true;
-      stopBtn.disabled = false;
-      setStatus("Waiting for motion data. Walk with your phone.");
-
-      // Detect browsers that do not deliver sensor events.
-      setTimeout(() => {
-        if (tracking && !lastMotionTime) {
-          setStatus(
-            "No motion events received. Check phone permissions and browser support."
-          );
-        } else if (tracking) {
-          setStatus("Motion sensor connected. Keep walking!");
-        }
-      }, 3000);
-
-    } catch (error) {
-      console.error("FitSoul sensor error:", error);
-      setStatus("Could not start. Check browser permissions.", false);
-    }
-  }
-
-  function stopTracking() {
-    tracking = false;
-
-    if (sensorAttached) {
-      window.removeEventListener("devicemotion", handleMotion);
-      sensorAttached = false;
-    }
-
-    startBtn.disabled = false;
-    saveSteps();
-    setStatus("Tracking stopped. Today's steps are saved.", false);
-  }
-
-  function resetTracking() {
-    if (!confirm("Reset all of today's steps and fitness progress?")) {
-      return;
-    }
-
-    refreshDay();
-    steps = 0;
-    lastStepTime = 0;
-    previousMagnitude = 0;
-    previousSlope = 0;
-    recentPeaks = [];
-    render();
-
-    setStatus(
-      tracking
-        ? "Today's progress reset. Keep walking!"
-        : "Today's steps and progress have been reset.",
-      tracking
-    );
-  }
-
-  startBtn.addEventListener("click", startTracking);
-  stopBtn.addEventListener("click", stopTracking);
-  resetBtn.addEventListener("click", resetTracking);
-
-  goalInput.addEventListener("change", () => {
-    const value = Number(goalInput.value);
-
-    if (!Number.isFinite(value) || value < 100 || value > 100000) {
-      goalInput.value = goal;
-      setStatus("Choose a step goal between 100 and 100,000.");
-      return;
-    }
-
-    goal = Math.round(value);
-    render();
-  });
-
-  document.addEventListener("visibilitychange", () => {
-    saveSteps();
-
-    if (tracking && document.visibilityState === "visible") {
-      setStatus("Tracker active. Walk with your phone.");
-    }
-  });
-
-  window.addEventListener("pagehide", () => {
-    saveSteps();
-    if (sensorAttached) {
-      window.removeEventListener("devicemotion", handleMotion);
-      sensorAttached = false;
-      tracking = false;
-    }
-  });
-
-  // Initialize today's saved steps.
-  storageKey = dayKey();
-  try {
-    steps = Number(localStorage.getItem(storageKey)) || 0;
-  } catch {
-    steps = 0;
-  }
-
-  stopBtn.disabled = true;
-  updateDate();
-  render();
-})();
-</script>
-
-<div style="background:#fff0df;padding:15px;border-radius:12px;margin:15px 0">
-  <h3>FitSoul Sensor Test</h3>
-  <p id="sensor-status">Tap the button to test your phone.</p>
-  <button id="sensor-test-button">Test Motion Sensor</button>
-</div>
-
-(() => {
-  // FitSoul automatic step counter
-  const $ = id => document.getElementById(id);
-
-  const startBtn = $("startTracking");
-  const stopBtn = $("stop-steps");
-  const resetBtn = $("resetTracking");
-  const statusEl = $("step-status");
-
-  if (!startBtn) {
-    console.error("FitSoul: startTracking button not found.");
-    return;
-  }
-
-  const GOAL = 8000;
-  const STEP_LENGTH_KM = 0.0007; // Approx. 70 cm per step
-  const KCAL_PER_STEP = 0.04;   // Rough estimate
-
-  const dayKey = () => {
-    const d = new Date();
-    return `fitsoul-steps-${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
-  };
-
-  let steps = Number(localStorage.getItem(dayKey()) || 0);
-  let tracking = false;
-  let gx = 0, gy = 0, gz = 0;
-  let calibrated = false;
-  let aboveThreshold = false;
-  let lastStepTime = 0;
-  let peak = 0;
-
-  function setStatus(message) {
-    if (statusEl) statusEl.textContent = message;
-  }
-
-  function render() {
-    // Update steps, distance and estimated calories.
-    const distance = steps * STEP_LENGTH_KM;
-    const calories = Math.round(steps * KCAL_PER_STEP);
-    const percent = Math.min(100, steps / GOAL * 100);
-
-    if ($("stepCount")) $("stepCount").textContent = steps.toLocaleString();
-    if ($("step-count")) $("step-count").textContent = steps.toLocaleString();
-    if ($("distance")) $("distance").textContent = distance.toFixed(2);
-    if ($("calories")) $("calories").textContent = calories.toLocaleString();
-
-    if ($("stepProgress")) $("stepProgress").style.width = percent + "%";
-    if ($("progressPercent")) {
-      $("progressPercent").textContent = Math.round(percent) + "% completed";
-    }
-    if ($("stepsSummary")) {
-      $("stepsSummary").textContent =
-        `${steps.toLocaleString()} / ${GOAL.toLocaleString()}`;
-    }
-    if ($("distanceSummary")) {
-      $("distanceSummary").textContent = distance.toFixed(2) + " km";
-    }
-    if ($("caloriesSummary")) {
-      $("caloriesSummary").textContent = calories + " kcal";
-    }
-    if ($("goalMessage")) {
-      $("goalMessage").textContent = steps >= GOAL
-        ? "🎉 Daily step goal reached!"
-        : `🌟 ${(GOAL - steps).toLocaleString()} steps to your daily goal.`;
-    }
-
-    localStorage.setItem(dayKey(), String(steps));
-  }
-
-  function onMotion(event) {
-    const a = event.acceleration;
-    const b = event.accelerationIncludingGravity;
-
-    // Prefer linear acceleration if available.
-    let x, y, z;
-    if (a && a.x != null && a.y != null && a.z != null) {
-      x = a.x; y = a.y; z = a.z;
-    } else if (b && b.x != null && b.y != null && b.z != null) {
-      x = b.x; y = b.y; z = b.z;
-
-      // Estimate gravity with a low-pass filter.
-      if (!calibrated) {
-        gx = x; gy = y; gz = z;
-        calibrated = true;
-      }
-      gx = 0.8 * gx + 0.2 * x;
-      gy = 0.8 * gy + 0.2 * y;
-      gz = 0.8 * gz + 0.2 * z;
-
-      x -= gx; y -= gy; z -= gz;
-    } else {
-      setStatus("No accelerometer data. Try Chrome on your phone.");
-      return;
-    }
-
-    const strength = Math.hypot(x, y, z);
-    const now = Date.now();
-
-    // A simple motion-peak detector; sensitivity may vary by phone.
-    if (strength > 1.2) {
-      if (!aboveThreshold) {
-        aboveThreshold = true;
-        peak = strength;
-      } else {
-        peak = Math.max(peak, strength);
-      }
-    } else if (strength < 0.7) {
-      if (
-        aboveThreshold &&
-        peak > 1.2 &&
-        now - lastStepTime > 300
-      ) {
-        steps++;
-        lastStepTime = now;
-        render();
-        setStatus("Tracking active — steps detected!");
-      }
-      aboveThreshold = false;
-      peak = 0;
-    }
-  }
-
-  async function startTracking() {
-    if (tracking) return;
-
-    if (!window.isSecureContext) {
-      setStatus("Open the HTTPS FitSoul website.");
-      return;
-    }
-
-    if (!("DeviceMotionEvent" in window)) {
-      setStatus("This browser does not support motion sensors.");
-      return;
-    }
-
-    try {
-      if (typeof DeviceMotionEvent.requestPermission === "function") {
-        const result = await DeviceMotionEvent.requestPermission();
-        if (result !== "granted") {
-          setStatus("Motion permission was denied.");
-          return;
-        }
-      }
-
-      calibrated = false;
-      aboveThreshold = false;
       window.addEventListener("devicemotion", onMotion);
+
       tracking = true;
-      startBtn.disabled = true;
-      setStatus("Sensor enabled. Start walking!");
+      $("start").disabled = true;
+      $("stop").disabled = false;
+      setStatus("Waiting for sensor readings. Start walking!");
     } catch (error) {
-      setStatus("Sensor error: " + error.message);
+      setStatus("Could not start motion tracking: " + error.message);
     }
   }
 
   function stopTracking() {
     window.removeEventListener("devicemotion", onMotion);
     tracking = false;
-    startBtn.disabled = false;
-    setStatus("Tracking stopped. Today's steps are saved.");
+    $("start").disabled = false;
+    $("stop").disabled = true;
+    render();
+    setStatus("Tracking stopped. Today's steps have been saved.");
   }
 
-  startBtn.addEventListener("click", startTracking);
-  if (stopBtn) stopBtn.addEventListener("click", stopTracking);
+  $("start").addEventListener("click", startTracking);
+  $("stop").addEventListener("click", stopTracking);
 
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      if (confirm("Reset today's steps?")) {
-        steps = 0;
-        render();
-        setStatus("Today's count reset.");
-      }
-    });
-  }
+  $("reset").addEventListener("click", () => {
+    if (confirm("Reset today's step count to zero?")) {
+      steps = 0;
+      render();
+      setStatus("Today's steps have been reset.");
+    }
+  });
+
+  // Save progress when the page is hidden or closed.
+  document.addEventListener("visibilitychange", () => {
+    localStorage.setItem(key, String(steps));
+  });
+
+  window.addEventListener("pagehide", () => {
+    localStorage.setItem(key, String(steps));
+  });
 
   render();
 })();
-
 </script>
-
-
 </body>
 </html>
