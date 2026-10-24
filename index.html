@@ -4,178 +4,184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitSoul | Fitness Tracker</title>
+  <meta name="theme-color" content="#ff7a18">
+  <meta name="description" content="FitSoul fitness tracker for daily steps, walking distance and estimated calories.">
+
+  <title>FitSoul - Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
+
 <body>
   <div class="app">
-    <aside class="sidebar" id="sidebar">
-
-<a href="#" class="brand">
-  <span class="brand-icon">
-    <svg
-      class="infinity-logo"
-      viewBox="0 0 64 40"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="FitSoul infinity logo"
-      role="img"
-    >
-      <path
-        d="M32 20
-           C25 12 19 5 12 9
-           C2 14 5 29 15 31
-           C22 33 27 26 32 20
-           C38 12 44 5 52 9
-           C62 14 59 29 49 31
-           C42 33 37 26 32 20"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-    </svg>
-  </span>
-  <span class="brand-name">Fit<span class="brand-soul">Soul</span></span>
-</a>
-
-      <p class="nav-label">WORKSPACE</p>
-      <nav>
-        <button class="nav-link active" data-view="dashboard">▦ Dashboard</button>
-        <button class="nav-link" data-view="activity">↗ Activity log</button>
-        <button class="nav-link" data-view="goals">◎ My goals</button>
-      </nav>
-      <div class="sidebar-bottom">
-        <div class="motivation">
-          <span class="green">✦ DAILY REMINDER</span>
-          <h3>Small steps.<br>Big changes.</h3>
-          <p>Consistency is your superpower. Keep showing up.</p>
-          <div class="progress"><span id="sideProgress"></span></div>
-          <small id="sideProgressText">0% of daily goals</small>
+    <header class="header">
+      <div class="brand">
+        <div class="logo" aria-label="Infinity logo">∞</div>
+        <div>
+          <h1>FitSoul</h1>
+          <p>Move with purpose. Live with energy.</p>
         </div>
-        <p class="profile">● &nbsp; Your fitness space</p>
       </div>
-    </aside>
 
-    <main class="main">
-      <header class="topbar">
-        <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">☰</button>
-        <div class="breadcrumb">Workspace / <strong id="pageName">Dashboard</strong></div>
-        <div class="top-actions">
-          <span class="date-chip" id="todayLabel"></span>
-          <button class="btn btn-dark" id="addBtn">＋ Log activity</button>
-        </div>
-      </header>
+      <div class="date-pill" id="todayDate">Your daily journey</div>
+    </header>
 
-      <section class="view active" id="dashboardView">
-        <div class="welcome">
-          <div>
-            <p class="eyebrow">YOUR PERSONAL FITNESS SPACE</p>
-            <h1>Good things take <span class="green">steps.</span></h1>
-            <p class="muted">A little progress each day adds up to big results.</p>
+    <main>
+      <section class="welcome">
+        <p class="eyebrow">YOUR FITNESS JOURNEY</p>
+        <h2>Every step counts.</h2>
+        <p>Move a little more today. Your future self will thank you.</p>
+      </section>
+
+      <section class="dashboard">
+
+        <!-- Step counter -->
+        <article class="card steps-card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">DAILY ACTIVITY</p>
+              <h2>Your Steps</h2>
+            </div>
+            <div class="round-icon">👟</div>
           </div>
-          <div class="streak"><span>♨</span><div><strong id="streak">0 day streak</strong><small>Keep your momentum going</small></div></div>
-        </div>
 
-        <div class="section-title">
-          <div><h2>Your daily snapshot</h2><p>Here's how you're moving today.</p></div>
-          <button class="text-btn" id="editGoals">Edit goals ↗</button>
-        </div>
+          <div class="step-number" id="stepCount">0</div>
+          <p class="muted">steps taken today</p>
 
-        <div class="stats-grid">
-          <article class="stat-card">
-            <div class="stat-top"><span class="stat-icon mint">↗</span><span class="stat-label">STEPS</span></div>
-            <h2><span id="stepsValue">0</span> <small>steps</small></h2>
-            <div class="track"><span id="stepsBar"></span></div>
-            <p class="stat-foot"><span><b id="stepsPct">0%</b> of daily goal</span><span id="stepsTarget">8,000 goal</span></p>
-          </article>
-          <article class="stat-card">
-            <div class="stat-top"><span class="stat-icon peach">♨</span><span class="stat-label">CALORIES BURNED</span></div>
-            <h2><span id="caloriesValue">0</span> <small>kcal</small></h2>
-            <div class="track peach-track"><span id="caloriesBar"></span></div>
-            <p class="stat-foot"><span><b id="caloriesPct">0%</b> of daily goal</span><span id="caloriesTarget">500 kcal goal</span></p>
-          </article>
-          <article class="stat-card">
-            <div class="stat-top"><span class="stat-icon lilac">◷</span><span class="stat-label">ACTIVE TIME</span></div>
-            <h2><span id="minutesValue">0</span> <small>min</small></h2>
-            <div class="track lilac-track"><span id="minutesBar"></span></div>
-            <p class="stat-foot"><span><b id="minutesPct">0%</b> of daily goal</span><span id="minutesTarget">30 min goal</span></p>
-          </article>
-        </div>
+          <div
+            class="progress-track"
+            id="stepProgressTrack"
+            role="progressbar"
+            aria-label="Daily step goal progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          >
+            <div class="progress-fill" id="stepProgress"></div>
+          </div>
 
-        <div class="content-grid">
-          <article class="panel">
-            <div class="panel-heading"><div><h2>Activity overview</h2><p>Your movement through the week</p></div><span class="legend">● Steps &nbsp; <span class="orange-text">●</span> Calories</span></div>
-            <div class="chart-container"><canvas id="weeklyChart"></canvas></div>
-            <p class="chart-footer">Your daily average <strong id="weeklyAverage">0 steps</strong></p>
-          </article>
-          <article class="panel">
-            <div class="panel-heading"><div><h2>Daily goals</h2><p>Make today count</p></div><span class="target">◎</span></div>
-            <div class="ring-row"><div class="ring" id="goalRing"><div><strong id="goalPercent">0%</strong><small>completed</small></div></div><div><h3 id="goalHeadline">Every step counts</h3><p class="muted small" id="goalDescription">Log your movement to see your progress.</p></div></div>
-            <div class="goal-row"><span class="stat-icon mint">↗</span><div><strong>Steps</strong><small id="goalSteps">0 / 8,000 steps</small></div><b id="goalStepsCheck">○</b></div>
-            <div class="goal-row"><span class="stat-icon peach">♨</span><div><strong>Calories</strong><small id="goalCalories">0 / 500 kcal</small></div><b id="goalCaloriesCheck">○</b></div>
-            <div class="goal-row"><span class="stat-icon lilac">◷</span><div><strong>Active time</strong><small id="goalMinutes">0 / 30 min</small></div><b id="goalMinutesCheck">○</b></div>
-          </article>
-        </div>
+          <div class="progress-info">
+            <span id="progressPercent">0% completed</span>
+            <span>Goal: <strong id="goalLabel">8,000</strong></span>
+          </div>
 
-        <div class="section-title recent-title"><div><h2>Recent activity</h2><p>Your latest wins, big or small.</p></div><button class="text-btn" id="viewAll">View all →</button></div>
-        <div class="panel activity-list" id="recentList"></div>
-        <div class="empty-state hidden" id="recentEmpty"><span>✦</span><h3>Your next win starts here</h3><p>Log your first activity and watch your progress grow.</p><button class="btn btn-dark" id="firstActivity">＋ Log your first activity</button></div>
-      </section>
+          <div class="goal-message" id="goalMessage" aria-live="polite">
+            🌟 Start walking to make progress toward your daily goal!
+          </div>
 
-      <section class="view" id="activityView">
-        <div class="page-heading"><div><p class="eyebrow">YOUR MOVEMENT</p><h1>Activity <span class="green">log.</span></h1><p class="muted">Every workout tells a story. Keep yours going.</p></div><button class="btn btn-dark" id="activityAdd">＋ Log activity</button></div>
-        <div class="stats-grid compact-stats">
-          <article class="stat-card"><p class="muted">Total activities</p><h2 id="totalActivities">0</h2></article>
-          <article class="stat-card"><p class="muted">Total calories</p><h2 id="totalCalories">0 kcal</h2></article>
-          <article class="stat-card"><p class="muted">Active minutes</p><h2 id="totalMinutes">0 min</h2></article>
-        </div>
-        <article class="panel log-panel">
-          <div class="panel-heading"><div><h2>All activities</h2><p>Review and manage your entries.</p></div><select id="activityFilter"><option value="all">All activities</option><option value="today">Today</option><option value="week">Last 7 days</option></select></div>
-          <div id="allActivityList" class="activity-list"></div>
-          <div class="empty-state hidden" id="activityEmpty"><span>↗</span><h3>No activities yet</h3><p>Add a workout to get started.</p></div>
+          <div class="tracker-status" aria-live="polite">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="stepStatus">Tracker is stopped</span>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="startTracking">
+              ▶ Start Tracking
+            </button>
+            <button class="btn btn-secondary" id="stopTracking" disabled>
+              Stop
+            </button>
+          </div>
+
+          <button class="reset-link" id="resetTracking">
+            Reset today's steps
+          </button>
         </article>
-      </section>
 
-      <section class="view" id="goalsView">
-        <div class="page-heading"><div><p class="eyebrow">YOUR NEXT MILESTONE</p><h1>Set your <span class="green">goals.</span></h1><p class="muted">Make your targets personal, realistic, and yours.</p></div></div>
-        <div class="goals-grid">
-          <article class="panel goals-panel">
-            <h2>Your daily targets</h2><p class="muted">Adjust these whenever your routine changes.</p>
-            <form id="goalsForm">
-              <label>Daily steps <small>How many steps are you aiming for?</small><input id="stepsGoalInput" type="number" min="100" max="100000" required></label>
-              <label>Calories burned <small>Your daily active energy target.</small><input id="caloriesGoalInput" type="number" min="10" max="10000" required></label>
-              <label>Active minutes <small>Time spent moving and exercising.</small><input id="minutesGoalInput" type="number" min="5" max="1440" required></label>
-              <button class="btn btn-dark full-width" type="submit">Save my goals →</button>
-              <p class="muted small" id="goalsFeedback">Your goals are saved in this browser.</p>
-            </form>
-          </article>
-          <article class="panel tip-panel"><span class="tip-icon">✦</span><p class="eyebrow">A LITTLE REMINDER</p><h2>Progress is a practice, not a finish line.</h2><p class="muted">Set a goal that challenges you without overwhelming you. Showing up consistently matters more than a perfect day.</p><blockquote>“You don't have to go fast. You just have to go.”</blockquote></article>
-        </div>
+        <!-- Stats -->
+        <article class="card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">YOUR NUMBERS</p>
+              <h2>Activity Summary</h2>
+            </div>
+            <div class="round-icon">📊</div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-icon">🔥</div>
+              <p class="stat-label">Calories burned</p>
+              <p class="stat-value">
+                <span id="calories">0</span>
+                <span class="unit">kcal</span>
+              </p>
+              <p class="stat-caption">Estimated</p>
+            </div>
+
+            <div class="stat-box">
+              <div class="stat-icon">📍</div>
+              <p class="stat-label">Distance</p>
+              <p class="stat-value">
+                <span id="distance">0.00</span>
+                <span class="unit">km</span>
+              </p>
+              <p class="stat-caption">Estimated</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Goals -->
+        <article class="card goals-card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">KEEP GOING</p>
+              <h2>Daily Goals</h2>
+            </div>
+            <div class="round-icon">🎯</div>
+          </div>
+
+          <div class="goal-row">
+            <div class="goal-icon">👟</div>
+            <div class="goal-details">
+              <div class="goal-row-title">
+                <span>Steps</span>
+                <strong id="stepsSummary">0 / 8,000</strong>
+              </div>
+              <div class="mini-track">
+                <div class="mini-fill" id="stepsMiniProgress"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="goal-row">
+            <div class="goal-icon">📍</div>
+            <div class="goal-details">
+              <div class="goal-row-title">
+                <span>Distance</span>
+                <strong id="distanceSummary">0 km</strong>
+              </div>
+              <p class="goal-description">Based on estimated step length</p>
+            </div>
+          </div>
+
+          <div class="goal-row">
+            <div class="goal-icon">🔥</div>
+            <div class="goal-details">
+              <div class="goal-row-title">
+                <span>Calories</span>
+                <strong id="caloriesSummary">0 kcal</strong>
+              </div>
+              <p class="goal-description">Estimated energy expenditure</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="tip-card">
+          <div class="tip-icon">💡</div>
+          <div>
+            <h3>FitSoul tip</h3>
+            <p>Keep your phone with you while walking. Check your progress regularly and build a consistent routine.</p>
+          </div>
+        </article>
+
       </section>
-      <footer>✳ Progress, not perfection. You're doing great.</footer>
     </main>
-  </div>
 
-  <div class="modal-backdrop hidden" id="activityModal">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-heading"><div><p class="eyebrow">ADD TO YOUR JOURNEY</p><h2 id="modalTitle">Log an activity<span class="green">.</span></h2><p class="muted">Give yourself credit for showing up.</p></div><button class="close-btn" id="closeModal" aria-label="Close">×</button></div>
-      <form id="activityForm">
-        <div class="form-grid">
-          <label class="full">Activity type<select id="activityType" required><option>Walking</option><option>Running</option><option>Cycling</option><option>Strength training</option><option>Yoga</option><option>Swimming</option><option>HIIT</option><option>Other</option></select></label>
-          <label>Date<input id="activityDate" type="date" required></label>
-          <label>Duration (minutes)<input id="activityDuration" type="number" min="0" max="1440" value="30" required></label>
-          <label>Calories burned (kcal)<input id="activityCalories" type="number" min="0" max="20000" value="150" required></label>
-          <label>Steps (optional)<input id="activitySteps" type="number" min="0" max="100000" value="0"></label>
-          <label class="full">Notes (optional)<input id="activityNotes" type="text" maxlength="100" placeholder="e.g. Morning walk in the park"></label>
-        </div>
-        <p class="error" id="formError"></p>
-        <div class="modal-actions"><button type="button" class="btn btn-light" id="cancelModal">Cancel</button><button type="submit" class="btn btn-dark">Save activity →</button></div>
-      </form>
-    </div>
+    <footer>
+      <div class="footer-logo">∞ FitSoul</div>
+      <p>Progress at your own pace. One step at a time.</p>
+    </footer>
   </div>
-  <div id="toast" class="toast" role="status"></div>
 </body>
 </html>
